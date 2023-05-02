@@ -13,7 +13,7 @@ private:
 
     void UpdateAcceleration();
 
-    sf::Vector2f position;
+    sf::Vector2f twoFramesOldPos;
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
 };
