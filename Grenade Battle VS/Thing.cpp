@@ -25,3 +25,8 @@ void Thing::SetPosition(sf::Vector2f newPosition)
 	position = newPosition;
 	sprite.setPosition(newPosition);
 }
+
+void Thing::SetPosition(float newX, float newY)
+{
+	SetPosition(sf::Vector2f(newX, newY));
+}

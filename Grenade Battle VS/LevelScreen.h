@@ -1,6 +1,7 @@
 #pragma once
 #include "Screen.h"
 #include "Player.h"
+#include "Tile.h"
 #include <SFML/Graphics.hpp>
 
 class Game;
@@ -19,7 +20,12 @@ public:
 
 private:
 
+    bool LoadLevel();
+    void Restart();
+
     Player player;
     bool gameRunning;
+
+    std::vector<Tile*> tiles;
 
 };

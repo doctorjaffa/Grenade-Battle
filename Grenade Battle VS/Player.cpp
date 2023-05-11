@@ -10,15 +10,25 @@ Player::Player()
 	, twoFramesOldPos(100, 300)
 	, velocity()
 	, acceleration()
+	, pips()
 {
 	{
 		sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/player_1.png"));
         sprite.setScale(sf::Vector2f(2.0f, 2.0f));
+
+		// Add sprites to pips
+		const int NUM_PIPS = 15;
+		for (int i = 0; i < NUM_PIPS; ++i)
+		{
+			pips.push_back(sf::Sprite());
+			pips[i].setTexture(AssetManager::RequestTexture("Assets/Graphics/pip.png"));
+		}
 	}
 }
 
 void Player::Update(sf::Time frameTime)
 {
+	Thing::Update(frameTime);
 
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
 	/* ------------------------------------------------------------------------------ Practical Task - Physics Alternatives ----------------------------------------------------------------------------------*/
@@ -75,6 +85,24 @@ void Player::Update(sf::Time frameTime)
 			break;
 	}
 
+	float pipTime = 0;
+	float pipTimeStep = 0.1f;
+	for (int i = 0; i < pips.size(); ++i)
+	{
+		pips[i].setPosition(GetPipPosition(pipTime));
+		pipTime += pipTimeStep;
+	}
+}
+
+void Player::Draw(sf::RenderTarget& target)
+{
+	Thing::Draw(target);
+
+	// Draw the pips
+	for (int i = 0; i < pips.size(); ++i)
+	{
+		target.draw(pips[i]);
+	}
 }
 
 void Player::UpdateAcceleration()
@@ -93,5 +121,22 @@ void Player::UpdateAcceleration()
     {
         acceleration.x = ACCEL;
     }
+}
+
+sf::Vector2f Player::GetPipPosition(float pipTime)
+{
+	const float GRAVITY = 1000;
+	const float VELOCITY_X = 500;
+	const float VELOCITY_Y = -500;
+
+	sf::Vector2f pipPosition;
+
+	//pipPosition = sf::Vector2f(0, 1000) * pipTime * pipTime + sf::Vector2f(500, -1000) * pipTime + sf::Vector2f(500, 500);
+
+	pipPosition = sf::Vector2f(0, 1000) * pipTime * pipTime + sf::Vector2f(500, -500) * pipTime + sf::Vector2f(300, 300);
+
+	//pipPosition = sf::Vector2f(0, GRAVITY) * pipTime * pipTime + sf::Vector2f(VELOCITY_X, VELOCITY_Y) + this->GetPosition();
+
+	return pipPosition;
 }
 

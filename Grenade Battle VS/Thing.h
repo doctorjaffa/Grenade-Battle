@@ -13,6 +13,7 @@ public:
 
 	sf::Vector2f GetPosition();
 	virtual void SetPosition(sf::Vector2f newPosition);
+	void SetPosition(float newX, float newY);
 
 protected:
 
