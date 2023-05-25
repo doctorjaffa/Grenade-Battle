@@ -29,6 +29,11 @@ private:
     LevelScreen* currentLevel;
 
     sf::Vector2f firingVelocity;
+    bool firingDirection;
+
+    bool hasFired;
+    sf::Clock grenadeCooldownTime;
+    float grenadeCooldownDuration;
 
 };
 

@@ -12,6 +12,10 @@ Player::Player(LevelScreen* newLevel)
 	: PhysicsObject()
 	, pips()
 	, currentLevel(newLevel)
+	, firingDirection(false)
+	, grenadeCooldownTime()
+	, grenadeCooldownDuration(3)
+	, hasFired(false)
 {
 	{
 		sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/player_1.png"));
@@ -41,6 +45,16 @@ void Player::Update(sf::Time frameTime)
 		pips[i].setPosition(GetPipPosition(pipTime));
 		pipTime += pipTimeStep;
 	}
+
+	if (hasFired)
+	{
+		if (grenadeCooldownTime.getElapsedTime().asSeconds() >= grenadeCooldownDuration)
+		{
+			hasFired = false;
+			grenadeCooldownTime.restart();
+		}
+	}
+
 }
 
 void Player::Draw(sf::RenderTarget& target)
@@ -89,10 +103,12 @@ void Player::UpdateAcceleration()
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
+		firingDirection = true;
         acceleration.x = -ACCEL;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
+		firingDirection = false;
         acceleration.x = ACCEL;
     }
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && grounded)
@@ -101,9 +117,22 @@ void Player::UpdateAcceleration()
 		grounded = false;
 	}
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !hasFired)
 	{
-		currentLevel->FireGrenade(0, GetPosition(), sf::Vector2f(500, -500));
+		// If player is facing left
+		if (firingDirection)
+		{
+			firingVelocity.x =  -ACCEL;
+		}
+		else 
+		{
+			firingVelocity.x =  ACCEL;
+		}
+		firingVelocity.y = acceleration.y;
+
+		currentLevel->FireGrenade(0, GetPosition(), firingVelocity);
+
+		hasFired = true;
 	}
 
 	if (sf::Joystick::isConnected(0))
