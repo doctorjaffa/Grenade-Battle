@@ -15,6 +15,14 @@ public:
 	virtual void SetPosition(sf::Vector2f newPosition);
 	void SetPosition(float newX, float newY);
 
+	bool CheckCollision(Thing other);
+	void SetColliding(bool newColliding);
+
+	sf::Vector2f GetCollisionDepth(Thing other);
+	virtual void HandleCollision(Thing& other);
+
+	void SetAlive(bool newAlive);
+
 protected:
 
 	sf::Sprite sprite;
@@ -22,8 +30,14 @@ protected:
 	sf::Vector2f hitboxOffset;
 	sf::Vector2f hitboxScale;
 
+	bool alive;
+
 private:
 
+	sf::Vector2f GetCollisionCentre();
+	sf::FloatRect GetAABB();
+
 	sf::Vector2f position;
+	bool colliding;
 };
 

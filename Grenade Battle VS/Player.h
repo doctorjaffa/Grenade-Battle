@@ -11,6 +11,8 @@ public:
 
     void Draw(sf::RenderTarget& target) override;
 
+    void HandleCollision(Thing& other) override;
+
 private:
 
     void UpdateAcceleration();
