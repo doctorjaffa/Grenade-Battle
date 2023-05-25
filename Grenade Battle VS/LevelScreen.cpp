@@ -9,7 +9,7 @@
 
 LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
-	, player()
+	, player(this)
 	, gameRunning(true)
 	, tiles()
 	, camera()
@@ -24,14 +24,13 @@ void LevelScreen::Update(sf::Time frameTime)
 
 		player.Update(frameTime);
 
-		/*
-		for (int i = 0; i < tiles.size(); ++i)
-		{
-			tiles[i]->Update(frameTime);
-		}
-		*/
-
 		player.SetColliding(false);
+
+		for (int i = 0; i < grenades.size(); ++i)
+		{
+			grenades[i]->Update(frameTime);
+			grenades[i]->SetColliding(false);
+		}
 
 		for (int i = 0; i < tiles.size(); ++i)
 		{
@@ -74,6 +73,11 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 	}
 
 	player.Draw(target);
+
+	for (int i = 0; i < grenades.size(); ++i)
+	{
+		grenades[i]->Draw(target);
+	}
 
 	target.setView(target.getDefaultView());
 }
@@ -161,4 +165,10 @@ bool LevelScreen::LoadLevel()
 void LevelScreen::Restart()
 {
 	LoadLevel();
+}
+
+void LevelScreen::FireGrenade(int playerNumber, sf::Vector2f position, sf::Vector2f velocity)
+{
+	grenades.push_back(new Grenade(playerNumber, position, velocity));
+
 }

@@ -1,17 +1,17 @@
 #include "Player.h"
+#include "LevelScreen.h"
 
+/*
 enum class PhysicsType {
     SYMPLECTIC_EULER,
     VELOCITY_VERLET
 };
+*/
 
-Player::Player()
-	: Thing()
-	, twoFramesOldPos(100, 300)
-	, velocity()
-	, acceleration()
+Player::Player(LevelScreen* newLevel)
+	: PhysicsObject()
 	, pips()
-	, grounded(true)
+	, currentLevel(newLevel)
 {
 	{
 		sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/player_1.png"));
@@ -32,68 +32,12 @@ Player::Player()
 
 void Player::Update(sf::Time frameTime)
 {
-	Thing::Update(frameTime);
-
-	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
-	/* ------------------------------------------------------------------------------ Practical Task - Physics Alternatives ----------------------------------------------------------------------------------*/
-	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
-
-	// Set a drag multiplier for smooth movement, and set the physics type being used in. 
-    const float DRAG_MULT = 5.0f;
-    const PhysicsType physics = PhysicsType::SYMPLECTIC_EULER;
-
-	switch (physics)
-	{
-		case PhysicsType::SYMPLECTIC_EULER:
-		{
-			// SEMI-IMPLICIT / SYMPLECTIC_EULER
-
-			// Get the previous frames' velocity 
-			velocity = velocity + acceleration * frameTime.asSeconds();
-
-			// Apply drag 
-			velocity = velocity - velocity * DRAG_MULT * frameTime.asSeconds();
-
-			// Set new position based on velocity
-			SetPosition(GetPosition() + velocity * frameTime.asSeconds());
-
-			// Update acceleration
-			UpdateAcceleration();
-		}
-		break;
-
-		case PhysicsType::VELOCITY_VERLET:
-		{
-			// VELOCITY VERLET / LEAP FROG
-
-			// Get half frame velocity using
-			// previous frame's acceleration
-			sf::Vector2f halfFrameVelocity = velocity + acceleration * frameTime.asSeconds() / 2.0f;
-
-			// Get new frame's position using half frame velocity
-			SetPosition(GetPosition() + halfFrameVelocity * frameTime.asSeconds());
-
-			// Update our current acceleration
-			UpdateAcceleration();
-
-			// Get new frame's velocity using half frame velocity and
-			// updated acceleration
-			velocity = halfFrameVelocity + acceleration * frameTime.asSeconds() / 2.0f;
-
-			// drag
-			velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
-		}
-		break;
-
-		default:
-			break;
-	}
+	PhysicsObject::Update(frameTime);
 
 	float pipTime = 0;
 	float pipTimeStep = 0.1f;
 	for (int i = 0; i < pips.size(); ++i)
 	{
-		//pips[i].setPosition(GetPosition());
 		pips[i].setPosition(GetPipPosition(pipTime));
 		pipTime += pipTimeStep;
 	}
@@ -134,11 +78,6 @@ void Player::HandleCollision(Thing& other)
 	SetPosition(newPos);
 }
 
-void Player::SetGrounded(bool newGrounded)
-{
-	grounded = newGrounded;
-}
-
 void Player::UpdateAcceleration()
 {
     const float ACCEL = 1000;
@@ -158,8 +97,13 @@ void Player::UpdateAcceleration()
     }
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && grounded)
 	{
-		acceleration.y = -ACCEL * 300;
+		acceleration.y = -ACCEL * 200;
 		grounded = false;
+	}
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		currentLevel->FireGrenade(0, GetPosition(), sf::Vector2f(500, -500));
 	}
 
 	if (sf::Joystick::isConnected(0))
@@ -169,15 +113,17 @@ void Player::UpdateAcceleration()
 		float deadzone = 15;
 
 		if (abs(axisX) > deadzone)
-			acceleration.x = ACCEL;
+			acceleration.x = axisX * ACCEL / 100.0f;
 
 		if (sf::Joystick::isButtonPressed(0, 0) && grounded)
 		{
-			acceleration.y = -ACCEL * 300;
+			acceleration.y = -ACCEL * 200;
 			grounded = false;
 		}
 	}
 }
+
+
 
 sf::Vector2f Player::GetPipPosition(float pipTime)
 {
@@ -186,10 +132,6 @@ sf::Vector2f Player::GetPipPosition(float pipTime)
 	const float VELOCITY_Y = -500;
 
 	sf::Vector2f pipPosition;
-
-	//pipPosition = sf::Vector2f(0, 1000) * pipTime * pipTime + sf::Vector2f(500, -1000) * pipTime + sf::Vector2f(500, 500);
-
-	//pipPosition = sf::Vector2f(0, 1000) * pipTime * pipTime + sf::Vector2f(500, -500) * pipTime + sf::Vector2f(300, 300);
 
 	pipPosition = sf::Vector2f(0, GRAVITY) * pipTime * pipTime + sf::Vector2f(VELOCITY_X, VELOCITY_Y) * pipTime + this->GetPosition();
 

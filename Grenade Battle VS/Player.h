@@ -1,11 +1,15 @@
 #pragma once
 #include "Thing.h"
+#include "PhysicsObject.h"
+
+class LevelScreen;
+
 class Player :
-    public Thing
+    public PhysicsObject
 {
 public:
 
-    Player();
+    Player(LevelScreen* newLevel);
 
     void Update(sf::Time frameTime) override;
 
@@ -13,19 +17,18 @@ public:
 
     void HandleCollision(Thing& other) override;
 
-    void SetGrounded(bool newGrounded);
 
 private:
 
-    void UpdateAcceleration();
+    void UpdateAcceleration() override;
 
     sf::Vector2f GetPipPosition(float pipTime);
 
-    sf::Vector2f twoFramesOldPos;
-    sf::Vector2f velocity;
-    sf::Vector2f acceleration;
     std::vector<sf::Sprite> pips;
 
-    bool grounded;
+    LevelScreen* currentLevel;
+
+    sf::Vector2f firingVelocity;
+
 };
 
