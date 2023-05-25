@@ -28,4 +28,6 @@ private:
 
     std::vector<Tile*> tiles;
 
+    sf::View camera;
+
 };

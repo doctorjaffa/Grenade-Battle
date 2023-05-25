@@ -11,13 +11,17 @@ Player::Player()
 	, velocity()
 	, acceleration()
 	, pips()
+	, grounded(true)
 {
 	{
 		sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/player_1.png"));
-        sprite.setScale(sf::Vector2f(2.0f, 2.0f));
+        sprite.setScale(sf::Vector2f(2.5f, 2.5f));
+
+		hitboxOffset = sf::Vector2f(0, 0);
+		hitboxScale = sf::Vector2f(0.9f, 0.9f);
 
 		// Add sprites to pips
-		const int NUM_PIPS = 15;
+		const int NUM_PIPS = 10;
 		for (int i = 0; i < NUM_PIPS; ++i)
 		{
 			pips.push_back(sf::Sprite());
@@ -35,7 +39,7 @@ void Player::Update(sf::Time frameTime)
 	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
 
 	// Set a drag multiplier for smooth movement, and set the physics type being used in. 
-    const float DRAG_MULT = 10.0f;
+    const float DRAG_MULT = 5.0f;
     const PhysicsType physics = PhysicsType::SYMPLECTIC_EULER;
 
 	switch (physics)
@@ -89,6 +93,7 @@ void Player::Update(sf::Time frameTime)
 	float pipTimeStep = 0.1f;
 	for (int i = 0; i < pips.size(); ++i)
 	{
+		//pips[i].setPosition(GetPosition());
 		pips[i].setPosition(GetPipPosition(pipTime));
 		pipTime += pipTimeStep;
 	}
@@ -124,24 +129,24 @@ void Player::HandleCollision(Thing& other)
 		newPos.y += depth.y;
 		velocity.y = 0;
 		acceleration.y = 0;
-
-		// If we collided from above
-		if (depth.y < 0)
-		{
-			velocity.y = -JUMPSPEED;
-		}
 	}
 
 	SetPosition(newPos);
 }
 
+void Player::SetGrounded(bool newGrounded)
+{
+	grounded = newGrounded;
+}
+
 void Player::UpdateAcceleration()
 {
     const float ACCEL = 1000;
+	const float GRAVITY = 1000;
 
     // Update acceleration
     acceleration.x = 0;
-    acceleration.y = 0;
+    acceleration.y = GRAVITY;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
@@ -151,6 +156,27 @@ void Player::UpdateAcceleration()
     {
         acceleration.x = ACCEL;
     }
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && grounded)
+	{
+		acceleration.y = -ACCEL * 300;
+		grounded = false;
+	}
+
+	if (sf::Joystick::isConnected(0))
+	{
+		float axisX = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+
+		float deadzone = 15;
+
+		if (abs(axisX) > deadzone)
+			acceleration.x = ACCEL;
+
+		if (sf::Joystick::isButtonPressed(0, 0) && grounded)
+		{
+			acceleration.y = -ACCEL * 300;
+			grounded = false;
+		}
+	}
 }
 
 sf::Vector2f Player::GetPipPosition(float pipTime)
@@ -163,9 +189,9 @@ sf::Vector2f Player::GetPipPosition(float pipTime)
 
 	//pipPosition = sf::Vector2f(0, 1000) * pipTime * pipTime + sf::Vector2f(500, -1000) * pipTime + sf::Vector2f(500, 500);
 
-	pipPosition = sf::Vector2f(0, 1000) * pipTime * pipTime + sf::Vector2f(500, -500) * pipTime + sf::Vector2f(300, 300);
+	//pipPosition = sf::Vector2f(0, 1000) * pipTime * pipTime + sf::Vector2f(500, -500) * pipTime + sf::Vector2f(300, 300);
 
-	//pipPosition = sf::Vector2f(0, GRAVITY) * pipTime * pipTime + sf::Vector2f(VELOCITY_X, VELOCITY_Y) + this->GetPosition();
+	pipPosition = sf::Vector2f(0, GRAVITY) * pipTime * pipTime + sf::Vector2f(VELOCITY_X, VELOCITY_Y) * pipTime + this->GetPosition();
 
 	return pipPosition;
 }

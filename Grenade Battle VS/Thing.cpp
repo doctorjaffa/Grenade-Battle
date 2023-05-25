@@ -13,6 +13,24 @@ Thing::Thing()
 void Thing::Draw(sf::RenderTarget& target)
 {
 	target.draw(sprite);
+
+	bool drawCollider = true;
+
+	if (drawCollider)
+	{
+		sf::RectangleShape rectangle;
+		sf::FloatRect bounds = GetAABB();
+		rectangle.setPosition(bounds.left, bounds.top);
+		rectangle.setSize(sf::Vector2f(bounds.width, bounds.height));
+		sf::Color collisionColor = sf::Color::Green;
+		// turn this red if a collision is occurring
+		if (colliding)
+			collisionColor = sf::Color::Red;
+		collisionColor.a = 100;
+		rectangle.setFillColor(collisionColor);
+
+		target.draw(rectangle);
+	}
 }
 
 void Thing::Update(sf::Time frameTime)

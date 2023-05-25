@@ -11,6 +11,8 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
 	, player()
 	, gameRunning(true)
+	, tiles()
+	, camera()
 {
 	Restart();
 }
@@ -22,9 +24,29 @@ void LevelScreen::Update(sf::Time frameTime)
 
 		player.Update(frameTime);
 
+		/*
 		for (int i = 0; i < tiles.size(); ++i)
 		{
 			tiles[i]->Update(frameTime);
+		}
+		*/
+
+		player.SetColliding(false);
+
+		for (int i = 0; i < tiles.size(); ++i)
+		{
+			tiles[i]->SetColliding(false);
+		}
+
+		for (int i = 0; i < tiles.size(); ++i)
+		{
+			if (tiles[i]->CheckCollision(player))
+			{
+				player.SetColliding(true);
+				player.SetGrounded(true);
+				tiles[i]->SetColliding(true);
+				player.HandleCollision(*tiles[i]);
+			}
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
@@ -36,13 +58,24 @@ void LevelScreen::Update(sf::Time frameTime)
 
 void LevelScreen::Draw(sf::RenderTarget& target)
 {
-	player.Draw(target);
+	// Update the camera based on the render target size and player position.
+	camera = target.getDefaultView();
+	sf::Vector2f cameraCenter = camera.getCenter();
+	cameraCenter.y = player.GetPosition().y;
+	camera.setCenter(cameraCenter);
+
+	// Update the render target to use the camera 
+	target.setView(camera);
 
 	// Draw "world" objects (ones that should use the camera)
 	for (int i = 0; i < tiles.size(); ++i)
 	{
 		tiles[i]->Draw(target);
 	}
+
+	player.Draw(target);
+
+	target.setView(target.getDefaultView());
 }
 
 bool LevelScreen::LoadLevel()
@@ -73,8 +106,8 @@ bool LevelScreen::LoadLevel()
 	float y = 0.0f;
 
 	// Define the spacing we will use for our grid
-	const float X_SPACE = 150.0f;
-	const float Y_SPACE = 150.0f;
+	const float X_SPACE = 45.0f;
+	const float Y_SPACE = 45.0f;
 
 	// Read each character one by one from the file...
 	char ch;
@@ -97,6 +130,8 @@ bool LevelScreen::LoadLevel()
 		else if (ch == 'P')
 		{
 			player.SetPosition(x, y);
+			std::cout << player.GetPosition().x;
+			std::cout << player.GetPosition().y;
 		}
 		else if (ch == 'T')
 		{
@@ -111,15 +146,16 @@ bool LevelScreen::LoadLevel()
 			std::cerr << "Unrecognised character in level file: " << ch;
 		}
 
-		// Close the file now that we are done with it 
-		inFile.close();
-
-		//player.SetAlive(true);
-		gameRunning = true;
-
-		// Return true if file was successfully loaded
-		return true;
 	}
+
+	// Close the file now that we are done with it 
+	inFile.close();
+
+	player.SetAlive(true);
+	gameRunning = true;
+
+	// Return true if file was successfully loaded
+	return true;
 }
 
 void LevelScreen::Restart()

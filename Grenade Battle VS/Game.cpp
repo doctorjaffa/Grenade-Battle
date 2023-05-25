@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Screen.h"
 #include "LevelScreen.h"
+#include <iostream>
 
 Game::Game()
 	: window(sf::VideoMode::getDesktopMode(), "Grenade Battle", sf::Style::Titlebar | sf::Style::Close)
@@ -60,7 +61,9 @@ void Game::Draw()
 
 	// Draw current screen
 	if (currentScreen != nullptr)
+	{
 		currentScreen->Draw(window);
+	}
 
 	window.display();
 }

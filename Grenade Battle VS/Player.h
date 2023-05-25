@@ -13,6 +13,8 @@ public:
 
     void HandleCollision(Thing& other) override;
 
+    void SetGrounded(bool newGrounded);
+
 private:
 
     void UpdateAcceleration();
@@ -23,5 +25,7 @@ private:
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
     std::vector<sf::Sprite> pips;
+
+    bool grounded;
 };
 
