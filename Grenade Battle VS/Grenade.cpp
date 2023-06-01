@@ -14,6 +14,29 @@ Grenade::Grenade(int newPlayerNumber, sf::Vector2f newPosition, sf::Vector2f new
 	velocity = newVelocity;
 }
 
+void Grenade::HandleCollision(Thing& other)
+{
+	sf::Vector2f depth = GetCollisionDepth(other);
+	sf::Vector2f newPos = GetPosition();
+
+	if (abs(depth.x) < abs(depth.y))
+	{
+		// Move in X direction
+		newPos.x += depth.x;
+		velocity.x = 0;
+		acceleration.x = 0;
+	}
+	else
+	{
+		// Move in y direction
+		newPos.y += depth.y;
+		velocity.y = 0;
+		acceleration.y = 0;
+	}
+
+	SetPosition(newPos);
+}
+
 
 
 

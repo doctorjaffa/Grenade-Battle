@@ -128,6 +128,7 @@ void Player::UpdateAcceleration()
 		{
 			firingVelocity.x =  ACCEL;
 		}
+
 		firingVelocity.y = acceleration.y;
 
 		currentLevel->FireGrenade(0, GetPosition(), firingVelocity);

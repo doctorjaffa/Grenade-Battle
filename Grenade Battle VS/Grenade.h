@@ -11,6 +11,8 @@ public:
 
     //sf::Vector2f GetPosition(float grenadeTime);
 
+    void HandleCollision(Thing& other) override;
+
 protected:
 
     int playerNumber;

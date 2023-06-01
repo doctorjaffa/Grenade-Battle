@@ -30,6 +30,13 @@ void LevelScreen::Update(sf::Time frameTime)
 		{
 			grenades[i]->Update(frameTime);
 			grenades[i]->SetColliding(false);
+
+			if (grenades[i]->CheckCollision(*tiles[i]))
+			{
+				grenades[i]->SetColliding(true);
+				grenades[i]->HandleCollision(*tiles[i]);
+			}
+
 		}
 
 		for (int i = 0; i < tiles.size(); ++i)

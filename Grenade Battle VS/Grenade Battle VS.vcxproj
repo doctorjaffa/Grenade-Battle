@@ -155,6 +155,7 @@
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Thing.cpp" />
     <ClCompile Include="Tile.cpp" />
+    <ClCompile Include="VectorHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Thing.h" />
     <ClInclude Include="Tile.h" />
+    <ClInclude Include="VectorHelper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
