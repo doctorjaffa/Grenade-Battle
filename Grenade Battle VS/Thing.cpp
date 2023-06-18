@@ -53,13 +53,27 @@ void Thing::SetPosition(float newX, float newY)
 	SetPosition(sf::Vector2f(newX, newY));
 }
 
+void Thing::HandleCollision(Thing& other)
+{
+	// Do nothing, handle in child class.
+}
+
+void Thing::SetAlive(bool newAlive)
+{
+	alive = newAlive;
+}
+
+	/* ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ */
+	/* ------------------------------------------------------------------------------ Practical Task - Collision Geometry -----------------------------------------------------------------------------------*/
+	/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
 bool Thing::CheckCollision(Thing other)
 {
 	if (!alive || !other.alive)
-	{ 
+	{
 		return false;
 	}
-	
+
 	return GetAABB().intersects(other.GetAABB());
 }
 
@@ -88,16 +102,6 @@ sf::Vector2f Thing::GetCollisionDepth(Thing other)
 		minDistance.y = -minDistance.y;
 
 	return actualDistance - minDistance;
-}
-
-void Thing::HandleCollision(Thing& other)
-{
-	// Do nothing, handle in child class.
-}
-
-void Thing::SetAlive(bool newAlive)
-{
-	alive = newAlive;
 }
 
 sf::Vector2f Thing::GetCollisionCentre()
