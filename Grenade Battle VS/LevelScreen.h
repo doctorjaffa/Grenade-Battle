@@ -25,7 +25,8 @@ private:
     bool LoadLevel();
     void Restart();
 
-    Player player;
+    Player player1;
+    Player player2;
     bool gameRunning;
 
     std::vector<Tile*> tiles;

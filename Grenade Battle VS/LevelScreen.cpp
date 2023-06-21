@@ -9,7 +9,8 @@
 
 LevelScreen::LevelScreen(Game* newGamePointer)
 	: Screen(newGamePointer)
-	, player(this)
+	, player1(this, 0)
+	, player2(this, 1)
 	, gameRunning(true)
 	, tiles()
 	, camera()
@@ -22,9 +23,11 @@ void LevelScreen::Update(sf::Time frameTime)
 	if (gameRunning)
 	{
 
-		player.Update(frameTime);
+		player1.Update(frameTime);
+		player2.Update(frameTime);
 
-		player.SetColliding(false);
+		player1.SetColliding(false);
+		player2.SetColliding(false);
 
 		for (int i = 0; i < grenades.size(); ++i)
 		{
@@ -46,12 +49,19 @@ void LevelScreen::Update(sf::Time frameTime)
 
 		for (int i = 0; i < tiles.size(); ++i)
 		{
-			if (tiles[i]->CheckCollision(player))
+			if (tiles[i]->CheckCollision(player1))
 			{
-				player.SetColliding(true);
-				player.SetGrounded(true);
+				player1.SetColliding(true);
+				player1.SetGrounded(true);
 				tiles[i]->SetColliding(true);
-				player.HandleCollision(*tiles[i]);
+				player1.HandleCollision(*tiles[i]);
+			}
+			if (tiles[i]->CheckCollision(player2))
+			{
+				player2.SetColliding(true);
+				player2.SetGrounded(true);
+				tiles[i]->SetColliding(true);
+				player2.HandleCollision(*tiles[i]);
 			}
 		}
 
@@ -67,7 +77,7 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 	// Update the camera based on the render target size and player position.
 	camera = target.getDefaultView();
 	sf::Vector2f cameraCenter = camera.getCenter();
-	cameraCenter.y = player.GetPosition().y;
+	cameraCenter.y = player1.GetPosition().y;
 	camera.setCenter(cameraCenter);
 
 	// Update the render target to use the camera 
@@ -79,7 +89,8 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 		tiles[i]->Draw(target);
 	}
 
-	player.Draw(target);
+	player1.Draw(target);
+	player2.Draw(target);
 
 	for (int i = 0; i < grenades.size(); ++i)
 	{
@@ -140,9 +151,13 @@ bool LevelScreen::LoadLevel()
 		}
 		else if (ch == 'P')
 		{
-			player.SetPosition(x, y);
-			std::cout << player.GetPosition().x;
-			std::cout << player.GetPosition().y;
+			player1.SetPosition(x, y);
+			std::cout << player1.GetPosition().x;
+			std::cout << player1.GetPosition().y;
+		}
+		else if (ch == 'O')
+		{
+			player2.SetPosition(x, y);
 		}
 		else if (ch == 'T')
 		{
@@ -162,7 +177,8 @@ bool LevelScreen::LoadLevel()
 	// Close the file now that we are done with it 
 	inFile.close();
 
-	player.SetAlive(true);
+	player1.SetAlive(true);
+	player2.SetAlive(true);
 	gameRunning = true;
 
 	// Return true if file was successfully loaded

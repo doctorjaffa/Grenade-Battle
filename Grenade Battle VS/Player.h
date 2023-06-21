@@ -9,7 +9,7 @@ class Player :
 {
 public:
 
-    Player(LevelScreen* newLevel);
+    Player(LevelScreen* newLevel, int newPlayerIndex);
 
     void Update(sf::Time frameTime) override;
 
@@ -29,11 +29,18 @@ private:
     LevelScreen* currentLevel;
 
     sf::Vector2f firingVelocity;
-    bool firingDirection;
+    //bool firingDirection;
 
     bool hasFired;
     sf::Clock grenadeCooldownTime;
     float grenadeCooldownDuration;
+
+    sf::Vector2f firingDirection;
+    float FIRING_SPEED;
+
+    void UpdateFiringDirection();
+
+    int playerIndex;
 
 };
 

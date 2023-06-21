@@ -1,24 +1,21 @@
 #include "Player.h"
 #include "LevelScreen.h"
+#include "VectorHelper.h"
 
-/*
-enum class PhysicsType {
-    SYMPLECTIC_EULER,
-    VELOCITY_VERLET
-};
-*/
-
-Player::Player(LevelScreen* newLevel)
+Player::Player(LevelScreen* newLevel, int newPlayerIndex)
 	: PhysicsObject()
+	, playerIndex(newPlayerIndex)
 	, pips()
 	, currentLevel(newLevel)
-	, firingDirection(false)
 	, grenadeCooldownTime()
 	, grenadeCooldownDuration(3)
 	, hasFired(false)
+	, firingDirection()
+	, FIRING_SPEED(750)
 {
 	{
-		sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/player_1.png"));
+		std::string playerTexture = "Assets/Graphics/player_" + std::to_string(playerIndex + 1) + ".png";
+		sprite.setTexture(AssetManager::RequestTexture(playerTexture));
         sprite.setScale(sf::Vector2f(2.5f, 2.5f));
 
 		hitboxOffset = sf::Vector2f(0, 0);
@@ -37,6 +34,8 @@ Player::Player(LevelScreen* newLevel)
 void Player::Update(sf::Time frameTime)
 {
 	PhysicsObject::Update(frameTime);
+
+	UpdateFiringDirection();
 
 	float pipTime = 0;
 	float pipTimeStep = 0.1f;
@@ -103,12 +102,12 @@ void Player::UpdateAcceleration()
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-		firingDirection = true;
+		//firingDirection = true;
         acceleration.x = -ACCEL;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-		firingDirection = false;
+		//firingDirection = false;
         acceleration.x = ACCEL;
     }
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && grounded)
@@ -117,43 +116,48 @@ void Player::UpdateAcceleration()
 		grounded = false;
 	}
 
+	
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !hasFired)
 	{
-		// If player is facing left
-		if (firingDirection)
-		{
-			firingVelocity.x =  -ACCEL;
-		}
-		else 
-		{
-			firingVelocity.x =  ACCEL;
-		}
-
 		firingVelocity.y = acceleration.y;
+		
 
 		currentLevel->FireGrenade(0, GetPosition(), firingVelocity);
 
 		hasFired = true;
 	}
 
-	if (sf::Joystick::isConnected(0))
+	if (sf::Joystick::isConnected(playerIndex))
 	{
-		float axisX = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+		float axisX = sf::Joystick::getAxisPosition(playerIndex, sf::Joystick::X);
 
-		float deadzone = 15;
+		const float DEADZONE = 15;
 
-		if (abs(axisX) > deadzone)
+		if (abs(axisX) > DEADZONE)
 			acceleration.x = axisX * ACCEL / 100.0f;
 
-		if (sf::Joystick::isButtonPressed(0, 0) && grounded)
+		if (sf::Joystick::isButtonPressed(playerIndex, 0) && grounded)
 		{
 			acceleration.y = -ACCEL * 200;
 			grounded = false;
 		}
+
+		float axisZ = sf::Joystick::getAxisPosition(playerIndex, sf::Joystick::Z);
+		if (abs(axisZ) > DEADZONE && !hasFired)
+		{
+			firingVelocity.y = acceleration.y;
+
+
+			currentLevel->FireGrenade(playerIndex, GetPosition(), firingVelocity);
+
+			hasFired = true;
+		}
 	}
 }
 
-
+/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------------------------- PRACTICAL TASK - GRAVITY PREDICTION ------------------------------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 sf::Vector2f Player::GetPipPosition(float pipTime)
 {
@@ -163,8 +167,29 @@ sf::Vector2f Player::GetPipPosition(float pipTime)
 
 	sf::Vector2f pipPosition;
 
-	pipPosition = sf::Vector2f(0, GRAVITY) * pipTime * pipTime + sf::Vector2f(VELOCITY_X, VELOCITY_Y) * pipTime + this->GetPosition();
+	pipPosition = sf::Vector2f(0, GRAVITY) * pipTime * pipTime + firingDirection * FIRING_SPEED * pipTime + this->GetPosition();
 
 	return pipPosition;
+}
+
+void Player::UpdateFiringDirection()
+{
+	const float DEADZONE = 15;
+
+	if (sf::Joystick::isConnected(0))
+	{
+		float axisX = sf::Joystick::getAxisPosition(playerIndex, sf::Joystick::U);
+		if (abs(axisX) > DEADZONE)
+		{
+			firingDirection.x = axisX;
+		}
+		float axisY = sf::Joystick::getAxisPosition(playerIndex, sf::Joystick::V);
+		if (abs(axisY) > DEADZONE)
+		{
+			firingDirection.y = axisY;
+		}
+
+		firingDirection = VectorHelper::Normalise(firingDirection);
+	}
 }
 
