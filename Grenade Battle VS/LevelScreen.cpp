@@ -14,6 +14,8 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	, gameRunning(true)
 	, tiles()
 	, camera()
+	, endPanel(newGamePointer->GetWindow())
+	, livesUI(&player1, &player2)
 {
 	Restart();
 }
@@ -22,7 +24,7 @@ void LevelScreen::Update(sf::Time frameTime)
 {
 	if (gameRunning)
 	{
-
+		livesUI.Update(frameTime);
 		player1.Update(frameTime);
 		player2.Update(frameTime);
 
@@ -34,10 +36,40 @@ void LevelScreen::Update(sf::Time frameTime)
 			grenades[i]->Update(frameTime);
 			grenades[i]->SetColliding(false);
 
-			if (grenades[i]->CheckCollision(*tiles[i]))
+			for (int j = 0; j < tiles.size(); ++j)
 			{
+				if (grenades[i]->CheckCollision(*tiles[j]))
+				{
+					grenades[i]->SetColliding(true);
+					grenades[i]->HandleCollision(*tiles[j]);
+				}
+			}
+
+			if (grenades[i]->CheckCollision(player1))
+			{
+				player1.SetColliding(true);
 				grenades[i]->SetColliding(true);
-				grenades[i]->HandleCollision(*tiles[i]);
+
+				player1.RemoveLife();
+
+				if (player1.GetLives() == 0)
+				{
+					endPanel.SetPlayer1Win(true);
+				}
+			}
+
+			if (grenades[i]->CheckCollision(player2))
+			{
+				player2.SetColliding(true);
+				grenades[i]->SetColliding(true);
+
+				player2.RemoveLife();
+
+				if (player2.GetLives() == 0)
+				{
+					endPanel.SetPlayer2Win(true);
+				}
+
 			}
 
 		}
@@ -64,11 +96,16 @@ void LevelScreen::Update(sf::Time frameTime)
 				player2.HandleCollision(*tiles[i]);
 			}
 		}
+	}
+	else
+	{
+		endPanel.Update(frameTime);
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-		{
-			Restart();
-		}
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+	{
+		Restart();
 	}
 }
 
@@ -98,6 +135,19 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 	}
 
 	target.setView(target.getDefaultView());
+
+	// Draw UI objects (use the base view)
+	if (!gameRunning)
+	{
+		endPanel.Draw(target);
+	}
+}
+
+void LevelScreen::TriggerEndState(bool _win)
+{
+	// TODO
+	gameRunning = false;
+	endPanel.StartAnimation();
 }
 
 bool LevelScreen::LoadLevel()
@@ -187,6 +237,13 @@ bool LevelScreen::LoadLevel()
 
 void LevelScreen::Restart()
 {
+	for (int i = 0; i < grenades.size(); ++i)
+	{
+		delete grenades[i];
+		grenades[i] = nullptr;
+	}
+	grenades.clear();
+
 	LoadLevel();
 }
 

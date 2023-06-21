@@ -22,5 +22,8 @@ protected:
     sf::Vector2f acceleration;
 
     bool grounded;
+    bool shouldDrag;
+
+    const float GRAVITY;
 };
 

@@ -12,6 +12,7 @@ Player::Player(LevelScreen* newLevel, int newPlayerIndex)
 	, hasFired(false)
 	, firingDirection()
 	, FIRING_SPEED(750)
+	, lives(3)
 {
 	{
 		std::string playerTexture = "Assets/Graphics/player_" + std::to_string(playerIndex + 1) + ".png";
@@ -28,6 +29,8 @@ Player::Player(LevelScreen* newLevel, int newPlayerIndex)
 			pips.push_back(sf::Sprite());
 			pips[i].setTexture(AssetManager::RequestTexture("Assets/Graphics/pip.png"));
 		}
+
+		shouldDrag = true;
 	}
 }
 
@@ -73,6 +76,11 @@ void Player::HandleCollision(Thing& other)
 	sf::Vector2f depth = GetCollisionDepth(other);
 	sf::Vector2f newPos = GetPosition();
 
+	if (dynamic_cast<Grenade*>(&other))
+	{
+		newPos.x += 100;
+	}
+
 	if (abs(depth.x) < abs(depth.y))
 	{
 		// Move in X direction
@@ -93,12 +101,9 @@ void Player::HandleCollision(Thing& other)
 
 void Player::UpdateAcceleration()
 {
-    const float ACCEL = 1000;
-	const float GRAVITY = 1000;
+	PhysicsObject::UpdateAcceleration();
 
-    // Update acceleration
-    acceleration.x = 0;
-    acceleration.y = GRAVITY;
+	const float ACCEL = 1000;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
@@ -119,7 +124,7 @@ void Player::UpdateAcceleration()
 	
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !hasFired)
 	{
-		firingVelocity.y = acceleration.y;
+		//firingVelocity.y = acceleration.y;
 		
 
 		currentLevel->FireGrenade(0, GetPosition(), firingVelocity);
@@ -138,17 +143,14 @@ void Player::UpdateAcceleration()
 
 		if (sf::Joystick::isButtonPressed(playerIndex, 0) && grounded)
 		{
-			acceleration.y = -ACCEL * 200;
+			acceleration.y = -ACCEL * 300;
 			grounded = false;
 		}
 
 		float axisZ = sf::Joystick::getAxisPosition(playerIndex, sf::Joystick::Z);
 		if (abs(axisZ) > DEADZONE && !hasFired)
 		{
-			firingVelocity.y = acceleration.y;
-
-
-			currentLevel->FireGrenade(playerIndex, GetPosition(), firingVelocity);
+			currentLevel->FireGrenade(playerIndex, GetPosition(), firingDirection * FIRING_SPEED);
 
 			hasFired = true;
 		}
@@ -161,13 +163,9 @@ void Player::UpdateAcceleration()
 
 sf::Vector2f Player::GetPipPosition(float pipTime)
 {
-	const float GRAVITY = 1000;
-	const float VELOCITY_X = 500;
-	const float VELOCITY_Y = -500;
-
 	sf::Vector2f pipPosition;
 
-	pipPosition = sf::Vector2f(0, GRAVITY) * pipTime * pipTime + firingDirection * FIRING_SPEED * pipTime + this->GetPosition();
+	pipPosition = sf::Vector2f(0, GRAVITY) * pipTime * pipTime / 2.0f + firingDirection * FIRING_SPEED * pipTime + GetPosition();
 
 	return pipPosition;
 }
@@ -191,5 +189,15 @@ void Player::UpdateFiringDirection()
 
 		firingDirection = VectorHelper::Normalise(firingDirection);
 	}
+}
+
+void Player::RemoveLife()
+{
+	lives--;
+}
+
+int Player::GetLives()
+{
+	return lives;
 }
 

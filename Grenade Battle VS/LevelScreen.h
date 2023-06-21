@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "Tile.h"
 #include "Grenade.h"
+#include "EndPanel.h"
+#include "PlayerLivesUI.h"
 #include <SFML/Graphics.hpp>
 
 class Game;
@@ -19,6 +21,8 @@ public:
 
     void FireGrenade(int playerNumber, sf::Vector2f position, sf::Vector2f velocity);
 
+    void TriggerEndState(bool _win);
+
 
 private:
 
@@ -27,6 +31,9 @@ private:
 
     Player player1;
     Player player2;
+
+    EndPanel endPanel;
+    PlayerLivesUI livesUI;
     bool gameRunning;
 
     std::vector<Tile*> tiles;

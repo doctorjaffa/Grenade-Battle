@@ -1,4 +1,6 @@
 #include "Grenade.h"
+#include "VectorHelper.h"
+#include <SFML/Graphics.hpp>
 
 Grenade::Grenade(int newPlayerNumber, sf::Vector2f newPosition, sf::Vector2f newVelocity)
 	: PhysicsObject()
@@ -14,6 +16,10 @@ Grenade::Grenade(int newPlayerNumber, sf::Vector2f newPosition, sf::Vector2f new
 	velocity = newVelocity;
 }
 
+/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------------------- PRACTICAL TASK - REFLECTION ------------------------------------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
 void Grenade::HandleCollision(Thing& other)
 {
 	sf::Vector2f depth = GetCollisionDepth(other);
@@ -23,15 +29,34 @@ void Grenade::HandleCollision(Thing& other)
 	{
 		// Move in X direction
 		newPos.x += depth.x;
-		velocity.x = 0;
+
+		/*
+		sf::Vector2f topLeft = (sf::Rect<float>::left, sf::Rect<float>::top);
+		sf::Vector2f bottomLeft = (sf::Rect<float>::left, sf::Rect<float>::top + sf::Rect<float>::height);
+
+		sf::Vector2f collisionLineX = (bottomLeft - topLeft);
+
+		sf::Vector2f newVelocity = VectorHelper::GetReflection(velocity, VectorHelper::GetNormal(collisionLineX));
+		velocity.x = newVelocity.x;
 		acceleration.x = 0;
+		*/
+		
 	}
 	else
 	{
 		// Move in y direction
 		newPos.y += depth.y;
-		velocity.y = 0;
+
+		/*
+		sf::Vector2f topLeft = (sf::Rect<float>::left, sf::Rect<float>::top);
+		sf::Vector2f topRight = (sf::Rect<float>::left + sf::Rect<float>::width, sf::Rect<float>::top);
+
+		sf::Vector2f collisionLineY = (topRight - topLeft);
+
+		sf::Vector2f newVelocity = VectorHelper::GetReflection(velocity, VectorHelper::GetNormal(collisionLineY));
+		velocity.y = newVelocity.y;
 		acceleration.y = 0;
+		*/
 	}
 
 	SetPosition(newPos);

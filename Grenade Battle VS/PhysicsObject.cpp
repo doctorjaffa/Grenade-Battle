@@ -10,6 +10,8 @@ PhysicsObject::PhysicsObject()
 	, velocity()
 	, acceleration()
 	, grounded(true)
+	, shouldDrag(false)
+	, GRAVITY(1000)
 {
 
 }
@@ -36,8 +38,11 @@ void PhysicsObject::Update(sf::Time frameTime)
 		// Get the previous frames' velocity 
 		velocity = velocity + acceleration * frameTime.asSeconds();
 
-		// Apply drag 
-		velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
+		if (shouldDrag)
+		{
+			// Apply drag 
+			velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
+		}
 
 		// Set new position based on velocity
 		SetPosition(GetPosition() + velocity * frameTime.asSeconds());
@@ -65,8 +70,12 @@ void PhysicsObject::Update(sf::Time frameTime)
 		// updated acceleration
 		velocity = halfFrameVelocity + acceleration * frameTime.asSeconds() / 2.0f;
 
-		// drag
-		velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
+		if (shouldDrag)
+		{
+			// drag
+			velocity.x = velocity.x - velocity.x * DRAG_MULT * frameTime.asSeconds();
+		}
+
 	}
 	break;
 
@@ -82,6 +91,7 @@ void PhysicsObject::SetGrounded(bool newGrounded)
 
 void PhysicsObject::UpdateAcceleration()
 {
-
+	// Update acceleration
+	acceleration.y = GRAVITY;
 }
 

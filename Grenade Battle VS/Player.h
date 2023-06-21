@@ -17,6 +17,10 @@ public:
 
     void HandleCollision(Thing& other) override;
 
+    void RemoveLife();
+
+    int GetLives();
+
 
 private:
 
@@ -41,6 +45,7 @@ private:
     void UpdateFiringDirection();
 
     int playerIndex;
+    int lives;
 
 };
 
