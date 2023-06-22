@@ -36,6 +36,8 @@ private:
     bool LoadLevel();
     void Restart();
 
+    void ResetPositions();
+
     // The two players
     Player player1;
     Player player2;

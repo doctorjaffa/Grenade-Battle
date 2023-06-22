@@ -21,6 +21,9 @@ public:
     // Getters/Setters
     int GetLives();
 
+    sf::Vector2f GetStartPosition();
+    void SetStartPosition(sf::Vector2f newStartPos);
+
     // Collision function
     void HandleCollision(Thing& other) override;
 
@@ -64,6 +67,8 @@ private:
     // Player index and lives
     int playerIndex;
     int lives;
+
+    sf::Vector2f startPosition;
 
 };
 

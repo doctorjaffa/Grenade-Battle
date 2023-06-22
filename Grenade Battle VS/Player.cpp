@@ -35,6 +35,7 @@ Player::Player(LevelScreen* newLevel, int newPlayerIndex)
 
 		// This player should apply drag in the PhysicsObject base class
 		shouldDrag = true;
+
 	}
 }
 
@@ -232,5 +233,15 @@ void Player::RemoveLife()
 int Player::GetLives()
 {
 	return lives;
+}
+
+sf::Vector2f Player::GetStartPosition()
+{
+	return startPosition;
+}
+
+void Player::SetStartPosition(sf::Vector2f newStartPos)
+{
+	startPosition = newStartPos;
 }
 

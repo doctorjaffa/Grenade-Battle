@@ -71,7 +71,7 @@ void LevelScreen::Update(sf::Time frameTime)
 					// Roll the end panel
 					endPanel.SetPlayer1Win(true);
 				}
-				player1.SetPosition(0, 0);
+				Restart();
 			}
 
 			// If the grenade is colliding with player 2
@@ -89,8 +89,7 @@ void LevelScreen::Update(sf::Time frameTime)
 					// Roll the end panel
 					endPanel.SetPlayer2Win(true);
 				}
-				//Restart();
-				player2.SetPosition(0, 0);
+				Restart();
 			} 
 
 			// If the grenade exceeds its lifetime, delete it
@@ -240,8 +239,6 @@ bool LevelScreen::LoadLevel()
 		else if (ch == 'P')
 		{
 			player1.SetPosition(x, y);
-			std::cout << player1.GetPosition().x;
-			std::cout << player1.GetPosition().y;
 		}
 		else if (ch == 'O')
 		{
@@ -275,16 +272,26 @@ bool LevelScreen::LoadLevel()
 
 void LevelScreen::Restart()
 {
+	
 	// Delete all of the grenades in the grenades vector
 	for (int i = 0; i < grenades.size(); ++i)
 	{
 		delete grenades[i];
 		grenades[i] = nullptr;
 	}
-	grenades.clear();
+	grenades.clear(); 
 
 	// Reload the level
 	LoadLevel();
+
+	ResetPositions();
+}
+
+void LevelScreen::ResetPositions()
+{
+	// Reset players to spawn positions
+	player1.SetStartPosition(player1.GetPosition());
+	player2.SetStartPosition(player2.GetPosition());
 }
 
 // Create a new grenade based on the current player position and velocity
