@@ -31,39 +31,40 @@ void Grenade::HandleCollision(Thing& other)
 	// Create a new position based on current position
 	sf::Vector2f newPos = GetPosition();
 
+	sf::FloatRect collisionBox = other.GetAABB();
+
 	if (abs(depth.x) < abs(depth.y))
 	{
 		// Move in X direction
 		newPos.x += depth.x;
-
-		/*
-		sf::Vector2f topLeft = (sf::Rect<float>::left, sf::Rect<float>::top);
-		sf::Vector2f bottomLeft = (sf::Rect<float>::left, sf::Rect<float>::top + sf::Rect<float>::height);
+		
+		sf::Vector2f topLeft(collisionBox.left, collisionBox.top);
+		sf::Vector2f bottomLeft(collisionBox.left, collisionBox.top + collisionBox.height);
 
 		sf::Vector2f collisionLineX = (bottomLeft - topLeft);
 
 		sf::Vector2f newVelocity = VectorHelper::GetReflection(velocity, VectorHelper::GetNormal(collisionLineX));
 		velocity.x = newVelocity.x;
-		acceleration.x = 0;
-		*/
-		
+		//acceleration.x = 0;
 	}
+	
 	else
 	{
 		// Move in y direction
 		newPos.y += depth.y;
 
-		/*
-		sf::Vector2f topLeft = (sf::Rect<float>::left, sf::Rect<float>::top);
-		sf::Vector2f topRight = (sf::Rect<float>::left + sf::Rect<float>::width, sf::Rect<float>::top);
+		
+		sf::Vector2f topLeft(collisionBox.left, collisionBox.top);
+		sf::Vector2f topRight(collisionBox.left + collisionBox.width, collisionBox.top);
 
 		sf::Vector2f collisionLineY = (topRight - topLeft);
 
 		sf::Vector2f newVelocity = VectorHelper::GetReflection(velocity, VectorHelper::GetNormal(collisionLineY));
 		velocity.y = newVelocity.y;
-		acceleration.y = 0;
-		*/
-	}
+		//acceleration.y = 0;
+		
+	} 
+	
 
 	// Update the position to this new position
 	SetPosition(newPos);

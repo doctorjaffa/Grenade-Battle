@@ -34,6 +34,8 @@ public:
 	// Collision Function
 	bool CheckCollision(Thing other);
 
+	sf::FloatRect GetAABB();
+
 // Protected functions/data
 protected:
 
@@ -52,7 +54,6 @@ private:
 
 	// Collision functions
 	sf::Vector2f GetCollisionCentre();
-	sf::FloatRect GetAABB();
 
 	// Object position
 	sf::Vector2f position;

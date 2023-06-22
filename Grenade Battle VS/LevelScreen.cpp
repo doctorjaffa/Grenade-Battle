@@ -55,6 +55,7 @@ void LevelScreen::Update(sf::Time frameTime)
 				}
 			}
 
+			
 			// If the grenade is colliding with player 1
 			if (grenades[i]->CheckCollision(player1))
 			{
@@ -70,7 +71,7 @@ void LevelScreen::Update(sf::Time frameTime)
 					// Roll the end panel
 					endPanel.SetPlayer1Win(true);
 				}
-				Restart();
+				//Restart();
 			}
 
 			// If the grenade is colliding with player 2
@@ -88,8 +89,8 @@ void LevelScreen::Update(sf::Time frameTime)
 					// Roll the end panel
 					endPanel.SetPlayer2Win(true);
 				}
-				Restart();
-			}
+				//Restart();
+			} 
 
 		}
 
