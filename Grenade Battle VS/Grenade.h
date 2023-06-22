@@ -3,18 +3,20 @@
 class Grenade :
     public PhysicsObject
 {
+
+// Public functions/data
 public:
     
+    // Constructor which gets the player index, the position of this grenade and its velocity 
     Grenade(int newPlayerNumber, sf::Vector2f newPosition, sf::Vector2f newVelocity);
 
-    //void Update(sf::Time frameTime) override;
-
-    //sf::Vector2f GetPosition(float grenadeTime);
-
+    // Collision code for this grenade
     void HandleCollision(Thing& other) override;
 
+// Protected functions/data
 protected:
 
+    // The player index
     int playerNumber;
 
 };

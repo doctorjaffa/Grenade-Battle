@@ -7,6 +7,7 @@ std::map<std::string, sf::SoundBuffer> AssetManager::soundBuffers;
 
 sf::Texture& AssetManager::RequestTexture(std::string assetName)
 {
+    // Find the texture in the textures map
     auto pairFound = textures.find(assetName);
 
     if (pairFound != textures.end())
@@ -16,6 +17,7 @@ sf::Texture& AssetManager::RequestTexture(std::string assetName)
     }
     else
     {
+        // If not there, create a new texture
         sf::Texture& newTexture = textures[assetName];
         newTexture.loadFromFile(assetName);
         return newTexture;
@@ -26,6 +28,7 @@ sf::Texture& AssetManager::RequestTexture(std::string assetName)
 
 sf::Font& AssetManager::RequestFont(std::string assetName)
 {
+    // Find the font in the fonts map
     auto pairFound = fonts.find(assetName);
 
     if (pairFound != fonts.end())
@@ -35,6 +38,7 @@ sf::Font& AssetManager::RequestFont(std::string assetName)
     }
     else
     {
+        // If not there, create a new font
         sf::Font& newFont = fonts[assetName];
         newFont.loadFromFile(assetName);
         return newFont;
@@ -45,6 +49,7 @@ sf::Font& AssetManager::RequestFont(std::string assetName)
 
 sf::SoundBuffer& AssetManager::RequestSoundBuffer(std::string assetName)
 {
+    // Find the sound buffer in the sound buffers map
     auto pairFound = soundBuffers.find(assetName);
 
     if (pairFound != soundBuffers.end())
@@ -54,6 +59,7 @@ sf::SoundBuffer& AssetManager::RequestSoundBuffer(std::string assetName)
     }
     else
     {
+        // If not there, create a new sound buffer
         sf::SoundBuffer& newSoundBuffer = soundBuffers[assetName];
         newSoundBuffer.loadFromFile(assetName);
         return newSoundBuffer;

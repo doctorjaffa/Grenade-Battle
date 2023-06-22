@@ -17,59 +17,78 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 	, endPanel(newGamePointer->GetWindow())
 	, livesUI(&player1, &player2)
 {
+	// Reset the level
 	Restart();
 }
 
 void LevelScreen::Update(sf::Time frameTime)
 {
+	// If the game is running
 	if (gameRunning)
 	{
+		// Update the lives UI and each player
 		livesUI.Update(frameTime);
 		player1.Update(frameTime);
 		player2.Update(frameTime);
 
+		// Set the colliding of the players
 		player1.SetColliding(false);
 		player2.SetColliding(false);
 
+		// For each grenade in the grenades vector
 		for (int i = 0; i < grenades.size(); ++i)
 		{
+			// Update the grenade
 			grenades[i]->Update(frameTime);
+			// Set its collding
 			grenades[i]->SetColliding(false);
 
+			// Check if the grenade is colliding with any tiles in the tile vector
 			for (int j = 0; j < tiles.size(); ++j)
 			{
+				// If it is colliding with a tile
 				if (grenades[i]->CheckCollision(*tiles[j]))
 				{
+					// Handle this collision
 					grenades[i]->SetColliding(true);
 					grenades[i]->HandleCollision(*tiles[j]);
 				}
 			}
 
+			// If the grenade is colliding with player 1
 			if (grenades[i]->CheckCollision(player1))
 			{
 				player1.SetColliding(true);
 				grenades[i]->SetColliding(true);
 
+				// Take away a life from the player 1
 				player1.RemoveLife();
 
+				// If the player 1 is out of lives
 				if (player1.GetLives() == 0)
 				{
+					// Roll the end panel
 					endPanel.SetPlayer1Win(true);
 				}
+				Restart();
 			}
 
+			// If the grenade is colliding with player 2
 			if (grenades[i]->CheckCollision(player2))
 			{
 				player2.SetColliding(true);
 				grenades[i]->SetColliding(true);
 
+				// Take away a life from the player 2
 				player2.RemoveLife();
 
+				// If the player 2 is out of lives
 				if (player2.GetLives() == 0)
 				{
+					// Roll the end panel
 					endPanel.SetPlayer2Win(true);
 				}
-
+				Restart();
 			}
 
 		}
@@ -79,17 +98,22 @@ void LevelScreen::Update(sf::Time frameTime)
 			tiles[i]->SetColliding(false);
 		}
 
+		// For each tile in the tiles vector
 		for (int i = 0; i < tiles.size(); ++i)
 		{
+			// If the tile is colliding with player 1
 			if (tiles[i]->CheckCollision(player1))
 			{
+				// The player is grounded and handle this collision
 				player1.SetColliding(true);
 				player1.SetGrounded(true);
 				tiles[i]->SetColliding(true);
 				player1.HandleCollision(*tiles[i]);
 			}
+			// If the tile is colliding with player 2
 			if (tiles[i]->CheckCollision(player2))
 			{
+				// The player is grounded and handle this collision
 				player2.SetColliding(true);
 				player2.SetGrounded(true);
 				tiles[i]->SetColliding(true);
@@ -97,12 +121,15 @@ void LevelScreen::Update(sf::Time frameTime)
 			}
 		}
 	}
+	// If the game is over
 	else
 	{
+		// Start rolling the end panel update
 		endPanel.Update(frameTime);
 
 	}
 
+	// If player presses R, restart the level
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 	{
 		Restart();
@@ -126,9 +153,11 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 		tiles[i]->Draw(target);
 	}
 
+	// Draw the players
 	player1.Draw(target);
 	player2.Draw(target);
 
+	// Draw all of the grenades
 	for (int i = 0; i < grenades.size(); ++i)
 	{
 		grenades[i]->Draw(target);
@@ -145,8 +174,9 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 
 void LevelScreen::TriggerEndState(bool _win)
 {
-	// TODO
+	// The game is over
 	gameRunning = false;
+	// Start the end panel animation
 	endPanel.StartAnimation();
 }
 
@@ -237,6 +267,7 @@ bool LevelScreen::LoadLevel()
 
 void LevelScreen::Restart()
 {
+	// Delete all of the grenades in the grenades vector
 	for (int i = 0; i < grenades.size(); ++i)
 	{
 		delete grenades[i];
@@ -244,9 +275,11 @@ void LevelScreen::Restart()
 	}
 	grenades.clear();
 
+	// Reload the level
 	LoadLevel();
 }
 
+// Create a new grenade based on the current player position and velocity
 void LevelScreen::FireGrenade(int playerNumber, sf::Vector2f position, sf::Vector2f velocity)
 {
 	grenades.push_back(new Grenade(playerNumber, position, velocity));

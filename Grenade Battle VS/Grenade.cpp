@@ -6,12 +6,16 @@ Grenade::Grenade(int newPlayerNumber, sf::Vector2f newPosition, sf::Vector2f new
 	: PhysicsObject()
 	, playerNumber(newPlayerNumber)
 {
+	// Get the texture from the textures map
 	sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/grenade.png"));
+	// Set the scale of this grenade
 	sprite.setScale(sf::Vector2f(2.5f, 2.5f));
 
+	// Set the hitbox data
 	hitboxOffset = sf::Vector2f(0, 0);
 	hitboxScale = sf::Vector2f(0.5f, 0.5f);
 	
+	// Update its position to the position handed in constructor, as well as its velocity
 	SetPosition(newPosition);
 	velocity = newVelocity;
 }
@@ -22,7 +26,9 @@ Grenade::Grenade(int newPlayerNumber, sf::Vector2f newPosition, sf::Vector2f new
 
 void Grenade::HandleCollision(Thing& other)
 {
+	// Get the collision depth with the object collided with
 	sf::Vector2f depth = GetCollisionDepth(other);
+	// Create a new position based on current position
 	sf::Vector2f newPos = GetPosition();
 
 	if (abs(depth.x) < abs(depth.y))
@@ -59,6 +65,7 @@ void Grenade::HandleCollision(Thing& other)
 		*/
 	}
 
+	// Update the position to this new position
 	SetPosition(newPos);
 }
 

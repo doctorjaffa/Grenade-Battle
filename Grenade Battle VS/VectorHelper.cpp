@@ -2,18 +2,22 @@
 
 float VectorHelper::SquareMagnitude(sf::Vector2f vec)
 {
+    // Square each term in the vector and add them together
     return vec.x * vec.x + vec.y * vec.y;;
 }
 
 float VectorHelper::Magnitude(sf::Vector2f vec)
 {
+    // Square root the square magnitude
     return sqrt(SquareMagnitude(vec));
 }
 
 sf::Vector2f VectorHelper::Normalise(sf::Vector2f vec)
 {
+    // Get the magnitude of this vector
     float mag = Magnitude(vec);
 
+    // Divide the vector by its magnitude
     vec.x = vec.x / mag;
     vec.y = vec.y / mag;
 
