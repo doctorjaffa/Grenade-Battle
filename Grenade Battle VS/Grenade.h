@@ -13,11 +13,20 @@ public:
     // Collision code for this grenade
     void HandleCollision(Thing& other) override;
 
+    // Grenade lifetime
+    float grenadeLifetime;
+
+    // Grenade timer 
+    sf::Clock grenadeTimer;
+
 // Protected functions/data
 protected:
 
     // The player index
     int playerNumber;
+
+// Private functions/data
+private:
 
 };
 

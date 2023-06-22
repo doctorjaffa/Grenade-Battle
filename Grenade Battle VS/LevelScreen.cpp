@@ -92,6 +92,13 @@ void LevelScreen::Update(sf::Time frameTime)
 				//Restart();
 			} 
 
+			// If the grenade exceeds its lifetime, delete it
+			if (grenades[i]->grenadeTimer.getElapsedTime().asSeconds() >= grenades[i]->grenadeLifetime)
+			{
+				delete grenades[i];
+				grenades[i] = nullptr;
+			}
+
 		}
 
 		for (int i = 0; i < tiles.size(); ++i)

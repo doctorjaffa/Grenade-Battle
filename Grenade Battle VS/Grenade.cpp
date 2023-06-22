@@ -5,6 +5,8 @@
 Grenade::Grenade(int newPlayerNumber, sf::Vector2f newPosition, sf::Vector2f newVelocity)
 	: PhysicsObject()
 	, playerNumber(newPlayerNumber)
+	, grenadeLifetime(3)
+	, grenadeTimer()
 {
 	// Get the texture from the textures map
 	sprite.setTexture(AssetManager::RequestTexture("Assets/Graphics/grenade.png"));
@@ -43,7 +45,7 @@ void Grenade::HandleCollision(Thing& other)
 
 		sf::Vector2f collisionLineX = (bottomLeft - topLeft);
 
-		sf::Vector2f newVelocity = VectorHelper::GetReflection(velocity, VectorHelper::GetNormal(collisionLineX));
+		sf::Vector2f newVelocity = VectorHelper::GetReflection(velocity, VectorHelper::Normalise(VectorHelper::GetNormal(collisionLineX)));
 		velocity.x = newVelocity.x;
 		//acceleration.x = 0;
 	}
@@ -59,7 +61,7 @@ void Grenade::HandleCollision(Thing& other)
 
 		sf::Vector2f collisionLineY = (topRight - topLeft);
 
-		sf::Vector2f newVelocity = VectorHelper::GetReflection(velocity, VectorHelper::GetNormal(collisionLineY));
+		sf::Vector2f newVelocity = VectorHelper::GetReflection(velocity, VectorHelper::Normalise(VectorHelper::GetNormal(collisionLineY)));
 		velocity.y = newVelocity.y;
 		//acceleration.y = 0;
 		
