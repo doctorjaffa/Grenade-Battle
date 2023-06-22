@@ -8,29 +8,27 @@ PlayerLivesUI::PlayerLivesUI(Player* player1, Player* player2)
 {
 	// Set all of the data for the player 1 lives counter
 	player1LivesText.setFont(AssetManager::RequestFont("Assets/Fonts/dogica.ttf"));
-	player1LivesText.setCharacterSize(70);
+	player1LivesText.setCharacterSize(50);
 	player1LivesText.setString("3");
 	player1LivesText.setFillColor(sf::Color::White);
 	player1LivesText.setPosition(50, 50);
 
 	// Set all of the data for the player 2 lives counter
 	player2LivesText.setFont(AssetManager::RequestFont("Assets/Fonts/dogica.ttf"));
-	player2LivesText.setCharacterSize(70);
+	player2LivesText.setCharacterSize(50);
 	player2LivesText.setString("3");
 	player2LivesText.setFillColor(sf::Color::White);
-	player2LivesText.setPosition(300, 50);
+	player2LivesText.setPosition(1200, 50);
 }
 
 void PlayerLivesUI::Update(sf::Time frameTime)
 {
 	// Create an empty player 1 lives string, add the player 1 lives to this string and set the player 1 lives counter to equal this string
-	std::string player1LivesStr = " ";
-	player1LivesStr += player1->GetLives();
+	std::string player1LivesStr = std::to_string(player1->GetLives());
 	player1LivesText.setString(player1LivesStr);
 
 	// Create an empty player 2 lives string, add the player 2 lives to this string and set the player 2 lives counter to equal this string
-	std::string player2LivesStr = " ";
-	player2LivesStr += player2->GetLives();
+	std::string player2LivesStr = std::to_string(player2->GetLives());
 	player2LivesText.setString(player2LivesStr);
 }
 

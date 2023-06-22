@@ -10,6 +10,9 @@ public:
     // Constructor which gets the player index, the position of this grenade and its velocity 
     Grenade(int newPlayerNumber, sf::Vector2f newPosition, sf::Vector2f newVelocity);
 
+    // Getters/Setters
+    int GetPlayerIndex();
+
     // Collision code for this grenade
     void HandleCollision(Thing& other) override;
 

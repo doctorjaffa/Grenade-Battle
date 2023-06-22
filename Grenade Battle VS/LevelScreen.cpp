@@ -23,6 +23,8 @@ LevelScreen::LevelScreen(Game* newGamePointer)
 
 void LevelScreen::Update(sf::Time frameTime)
 {
+	//gameRunning = false;
+
 	// If the game is running
 	if (gameRunning)
 	{
@@ -57,7 +59,7 @@ void LevelScreen::Update(sf::Time frameTime)
 
 			
 			// If the grenade is colliding with player 1
-			if (grenades[i]->CheckCollision(player1))
+			if (grenades[i]->CheckCollision(player1) && grenades[i]->GetPlayerIndex() != player1.GetPlayerIndex())
 			{
 				player1.SetColliding(true);
 				grenades[i]->SetColliding(true);
@@ -69,13 +71,20 @@ void LevelScreen::Update(sf::Time frameTime)
 				if (player1.GetLives() == 0)
 				{
 					// Roll the end panel
-					endPanel.SetPlayer1Win(true);
+					endPanel.SetPlayer2Win(true);
+					gameRunning = false;
+					endPanel.StartAnimation();
+					break;
 				}
-				Restart();
+				if (player1.GetLives() > 0)
+				{
+					Restart();
+				}
+				break;
 			}
 
 			// If the grenade is colliding with player 2
-			if (grenades[i]->CheckCollision(player2))
+			if (grenades[i]->CheckCollision(player2) && grenades[i]->GetPlayerIndex() != player2.GetPlayerIndex())
 			{
 				player2.SetColliding(true);
 				grenades[i]->SetColliding(true);
@@ -84,12 +93,19 @@ void LevelScreen::Update(sf::Time frameTime)
 				player2.RemoveLife();
 
 				// If the player 2 is out of lives
-				if (player2.GetLives() == 0)
+				if (player2.GetLives() <= 0)
 				{
 					// Roll the end panel
-					endPanel.SetPlayer2Win(true);
+					endPanel.SetPlayer1Win(true);
+					gameRunning = false;
+					endPanel.StartAnimation();
+					break;
 				}
-				Restart();
+				if (player2.GetLives())
+				{
+					Restart();
+				}
+				break;
 			} 
 
 			// If the grenade exceeds its lifetime, delete it
@@ -145,16 +161,7 @@ void LevelScreen::Update(sf::Time frameTime)
 
 void LevelScreen::Draw(sf::RenderTarget& target)
 {
-	// Update the camera based on the render target size and player position.
-	camera = target.getDefaultView();
-	sf::Vector2f cameraCenter = camera.getCenter();
-	cameraCenter.y = player1.GetPosition().y;
-	camera.setCenter(cameraCenter);
-
-	// Update the render target to use the camera 
-	target.setView(camera);
-
-	// Draw "world" objects (ones that should use the camera)
+	// Draw "world" objects
 	for (int i = 0; i < tiles.size(); ++i)
 	{
 		tiles[i]->Draw(target);
@@ -171,6 +178,11 @@ void LevelScreen::Draw(sf::RenderTarget& target)
 	}
 
 	target.setView(target.getDefaultView());
+
+	if (gameRunning)
+	{
+		livesUI.Draw(target);
+	}
 
 	// Draw UI objects (use the base view)
 	if (!gameRunning)
@@ -285,6 +297,14 @@ void LevelScreen::Restart()
 	LoadLevel();
 
 	ResetPositions();
+}
+
+void LevelScreen::RestartGame()
+{
+	Restart();
+	
+	player1.SetLives(3);
+	player2.SetLives(3);
 }
 
 void LevelScreen::ResetPositions()

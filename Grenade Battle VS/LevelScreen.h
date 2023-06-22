@@ -35,6 +35,7 @@ private:
     // Load and restart the level
     bool LoadLevel();
     void Restart();
+    void RestartGame();
 
     void ResetPositions();
 

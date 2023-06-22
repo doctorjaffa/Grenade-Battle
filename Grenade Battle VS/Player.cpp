@@ -12,7 +12,7 @@ Player::Player(LevelScreen* newLevel, int newPlayerIndex)
 	, hasFired(false)
 	, firingDirection()
 	, FIRING_SPEED(750)
-	, lives(3)
+	, lives(1)
 {
 	{
 		// Get the player texture from the textures map
@@ -235,6 +235,11 @@ int Player::GetLives()
 	return lives;
 }
 
+void Player::SetLives(int newLives)
+{
+	lives = newLives;
+}
+
 sf::Vector2f Player::GetStartPosition()
 {
 	return startPosition;
@@ -243,5 +248,10 @@ sf::Vector2f Player::GetStartPosition()
 void Player::SetStartPosition(sf::Vector2f newStartPos)
 {
 	startPosition = newStartPos;
+}
+
+int Player::GetPlayerIndex()
+{
+	return playerIndex;
 }
 

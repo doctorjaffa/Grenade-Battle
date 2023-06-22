@@ -20,9 +20,12 @@ public:
 
     // Getters/Setters
     int GetLives();
+    void SetLives(int newLives);
 
     sf::Vector2f GetStartPosition();
     void SetStartPosition(sf::Vector2f newStartPos);
+
+    int GetPlayerIndex();
 
     // Collision function
     void HandleCollision(Thing& other) override;
