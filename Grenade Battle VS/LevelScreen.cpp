@@ -71,7 +71,7 @@ void LevelScreen::Update(sf::Time frameTime)
 					// Roll the end panel
 					endPanel.SetPlayer1Win(true);
 				}
-				//Restart();
+				player1.SetPosition(0, 0);
 			}
 
 			// If the grenade is colliding with player 2
@@ -90,13 +90,13 @@ void LevelScreen::Update(sf::Time frameTime)
 					endPanel.SetPlayer2Win(true);
 				}
 				//Restart();
+				player2.SetPosition(0, 0);
 			} 
 
 			// If the grenade exceeds its lifetime, delete it
 			if (grenades[i]->grenadeTimer.getElapsedTime().asSeconds() >= grenades[i]->grenadeLifetime)
 			{
-				delete grenades[i];
-				grenades[i] = nullptr;
+				grenades[i]->SetAlive(false);
 			}
 
 		}

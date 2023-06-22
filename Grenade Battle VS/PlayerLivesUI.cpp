@@ -18,7 +18,7 @@ PlayerLivesUI::PlayerLivesUI(Player* player1, Player* player2)
 	player2LivesText.setCharacterSize(70);
 	player2LivesText.setString("3");
 	player2LivesText.setFillColor(sf::Color::White);
-	player2LivesText.setPosition(300, 300);
+	player2LivesText.setPosition(300, 50);
 }
 
 void PlayerLivesUI::Update(sf::Time frameTime)

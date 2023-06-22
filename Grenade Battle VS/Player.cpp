@@ -169,8 +169,10 @@ void Player::UpdateAcceleration()
 		// If it's further than the deadzone, and the player hasn't fired already
 		if (abs(axisZ) > DEADZONE && !hasFired)
 		{
+			// Grenade offset
+			sf::Vector2f grenadeOffset(45.0f, -5.0f);
 			// Create a new grenade and set its data based on the player 
-			currentLevel->FireGrenade(playerIndex, GetPosition(), firingDirection * FIRING_SPEED);
+			currentLevel->FireGrenade(playerIndex, GetPosition() + grenadeOffset, firingDirection * FIRING_SPEED);
 
 			// The player has fired
 			hasFired = true;

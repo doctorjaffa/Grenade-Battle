@@ -57,7 +57,6 @@ void Thing::SetPosition(float newX, float newY)
 
 void Thing::HandleCollision(Thing& other)
 {
-	// Do nothing, handle in child class.
 }
 
 void Thing::SetAlive(bool newAlive)
