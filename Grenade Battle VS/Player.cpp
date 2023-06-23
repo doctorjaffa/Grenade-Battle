@@ -12,7 +12,7 @@ Player::Player(LevelScreen* newLevel, int newPlayerIndex)
 	, hasFired(false)
 	, firingDirection()
 	, FIRING_SPEED(750)
-	, lives(1)
+	, lives(3)
 {
 	{
 		// Get the player texture from the textures map

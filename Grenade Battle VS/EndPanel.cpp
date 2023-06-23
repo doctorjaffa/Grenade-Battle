@@ -24,7 +24,7 @@ EndPanel::EndPanel(sf::RenderWindow* newWindow)
 	// Set the restart game text data (Restart/Quit)
 	restartText.setFont(AssetManager::RequestFont("Assets/Fonts/dogica.ttf"));
 	restartText.setCharacterSize(30);
-	restartText.setString("Press R to restart,\nor ESCAPE to quit.");
+	restartText.setString("Press Y to restart,\n\nor B to quit.");
 	restartText.setFillColor(sf::Color::Black);
 
 	// Reset the position of this panel

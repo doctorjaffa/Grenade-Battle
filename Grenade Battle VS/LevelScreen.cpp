@@ -150,12 +150,16 @@ void LevelScreen::Update(sf::Time frameTime)
 		// Start rolling the end panel update
 		endPanel.Update(frameTime);
 
-	}
-
-	// If player presses R, restart the level
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-	{
-		Restart();
+		// If player presses Y, restart the level
+		if (sf::Joystick::isButtonPressed(player1.GetPlayerIndex(), 3))
+		{
+			Restart();
+		}
+		// If player presses B, close the game
+		if (sf::Joystick::isButtonPressed(player1.GetPlayerIndex(), 2))
+		{
+			return;
+		}
 	}
 }
 
